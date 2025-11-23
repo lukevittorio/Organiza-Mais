@@ -1,20 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+
+import AuthStack from './src/autenticacao/AuthStack';
+import Main from './src/telas-internas/Main';
 
 export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      {loggedIn ? (
+        <Main setLoggedIn={setLoggedIn} /> // Menu e telas internas;
+      ) : (
+        <AuthStack setLoggedIn={setLoggedIn} /> // "Autenticação" do login;
+      )}
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
