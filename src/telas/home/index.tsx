@@ -30,6 +30,10 @@ export default function Home({ navigation }: Props) {
   // Saldo;
   const [saldo, setSaldo] = useState(0);
 
+  // Planejamento;
+  const [despesaPlan, setDespesaPlan] = useState(0);
+  const [saldoPlanejamento, setSaldoPlanejamento] = useState(0);
+
   // Transações;
   type Transacao = {
     id: number;
@@ -103,7 +107,45 @@ export default function Home({ navigation }: Props) {
       }
 
       fetchSaldo();
-    }, [])
+
+      const carregarPlanejamento = async () => {
+        try {
+          // ID user;
+          const userIdString = await AsyncStorage.getItem("userId");
+          if (!userIdString) return;
+
+          const userId = Number(userIdString);
+
+          // Informações Planejamento;
+          const { data, error } = await supabase
+            .from("Planejamento Futuro")
+            .select("ValorDespesa")
+            .eq("UsuarioId", userId)
+            .single();
+
+          if (!data) return;
+
+          // Definindo valores;
+          setDespesaPlan(data.ValorDespesa);
+
+        } catch (err) {
+          console.log("Erro ao carregar planejamento:", err);
+        }
+      };
+
+      carregarPlanejamento();
+
+      // Cálculo das despesas reais;
+      const totalDespesasReais = transacoes
+        .filter(t => t.Tipo === false)
+        .reduce((acc, t) => acc + (t?.Valor ?? 0), 0);
+
+      // Saldo final;
+      const saldo = despesaPlan - totalDespesasReais;
+
+      setSaldoPlanejamento(saldo);
+
+    }, [despesaPlan, transacoes])
   );
 
   // Calculando o saldo com base nas transações;
@@ -151,6 +193,9 @@ export default function Home({ navigation }: Props) {
   // Tamanho do gráfico;
   const screenWidth = Dimensions.get("window").width;
 
+  // Verificar existência de planejamento;
+  const temPlanejamento = despesaPlan > 0;
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       {/* Para quando clicar fora do teclado, ele suma; */}
@@ -165,7 +210,7 @@ export default function Home({ navigation }: Props) {
           {/* Área de vizualização */}
           <View style={styles.containerheader}>
             <TouchableOpacity onPress={() => navigation.navigate('Perfil')}>
-              <Image source={require('../../../assets/felipe.png')} style={styles.img} resizeMode="cover" />
+              <Image source={require('../../../assets/perfil.png')} style={styles.img} resizeMode="cover" />
             </TouchableOpacity>
 
             {/* Nome; */}
@@ -225,7 +270,7 @@ export default function Home({ navigation }: Props) {
 
                       {/* Nome e valor; */}
                       <Texto style={styles.legendaTexto}>
-                        <Texto style={{ fontSize: 16}}>{item.name}</Texto>
+                        <Texto style={{ fontSize: 16 }}>{item.name}</Texto>
                         {`:  ${item.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`}
                       </Texto>
                     </View>
@@ -241,11 +286,52 @@ export default function Home({ navigation }: Props) {
           </TouchableOpacity>
 
 
-          <TouchableOpacity onPress={() => navigation.navigate('Planejamento')} style={styles.containerbox}>
-            {/* Planejamento; */}
-            <Texto style={styles.textoplanejamento}>Você pode gastar:</Texto>
-            <Texto style={styles.saldoplanejamento}>225,00</Texto>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Planejamento')}
+            style={styles.containerbox}
+          >
+            {temPlanejamento ? (
+              <>
+                {saldoPlanejamento >= 0 ? (
+                  <>
+                    <Texto style={styles.textoplanejamento}>Você pode gastar:</Texto>
+                    <Texto
+                      style={[
+                        styles.saldoplanejamento,
+                        saldoPlanejamento > 0 ? styles.planejamentoPositivo : {}
+                      ]}
+                    >
+                      {saldoPlanejamento.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    </Texto>
+                  </>
+                ) : (
+                  <>
+                    <Texto style={[styles.textoplanejamento, { color: "#B3261E" }]}>
+                      Você gastou mais do que deveria!
+                    </Texto>
+
+                    <View style={styles.containerDevendo}>
+                      <Texto style={[styles.textoplanejamento, { color: "#0E3939" }]}>
+                        Está devendo:
+                      </Texto>
+
+                      <Texto style={[styles.saldoplanejamento, styles.planejamentoNegativo]}>
+                        {" "}
+                        {Math.abs(saldoPlanejamento).toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2
+                        })}
+                      </Texto>
+                    </View>
+                  </>
+                )}
+              </>
+            ) : (
+              <Texto style={styles.textoSemPlanejamento}>
+                Nenhum planejamento definido!
+              </Texto>
+            )}
           </TouchableOpacity>
+
         </ScrollView>
       </LinearGradient>
     </TouchableWithoutFeedback>

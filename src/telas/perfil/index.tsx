@@ -303,7 +303,7 @@ export default function Perfil({ navigation, setLoggedIn }: Props) {
         {/* Informações; */}
         <View style={styles.containerconteudo}>
           <Texto style={styles.tituloperfil}>Perfil</Texto>
-          <Image source={require('../../../assets/felipe.png')} style={styles.img} resizeMode="cover" />
+          <Image source={require('../../../assets/perfil.png')} style={styles.img} resizeMode="cover" />
           <Texto style={styles.nometexto}>{nome || 'Carregando...'}</Texto>
           <Texto style={styles.emailtexto}>{email || 'Carregando...'}</Texto>
         </View>

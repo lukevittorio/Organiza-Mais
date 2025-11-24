@@ -72,7 +72,7 @@ const estiloHome = StyleSheet.create({
     containerbox: {
         backgroundColor: '#fffdff',
         borderRadius: 50,
-        padding: '5%',
+        padding: '6%',
         alignItems: "center",
         marginVertical: '4%',
     },
@@ -132,6 +132,26 @@ const estiloHome = StyleSheet.create({
         fontSize: 24,
         textAlign: 'center',
         color: '#0E3939',
+    },
+
+    textoSemPlanejamento: {
+        fontSize: 20,
+        color: "#0E3939",
+        textAlign: "center",
+    },
+
+    planejamentoPositivo: {
+        color: '#0E3939'
+    },
+
+    planejamentoNegativo: {
+        color: '#ce1515ff'
+    },
+
+    containerDevendo: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
     },
 });
 
