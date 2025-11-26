@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@react-native-vector-icons/ionicons'
 
 // Importações internas;
 import Texto from '../../componentes/texto';
@@ -29,6 +30,7 @@ export default function Home({ navigation }: Props) {
 
   // Saldo;
   const [saldo, setSaldo] = useState(0);
+  const [mostrarSaldo, setMostrarSaldo] = useState(false);
 
   // Planejamento;
   const [despesaPlan, setDespesaPlan] = useState(0);
@@ -220,15 +222,35 @@ export default function Home({ navigation }: Props) {
           </View>
 
           {/* Saldo; */}
-          <TouchableOpacity onPress={() => navigation.navigate('Transações')} style={styles.containersaldo}>
+          <View style={styles.containersaldo}>
             <Texto style={styles.titulosaldo}>Saldo</Texto>
-            <Texto style={[
-              styles.saldo,
-              saldo < 0 ? styles.saldoNegativo : styles.saldoPositivo
-            ]}>
-              {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-            </Texto>
-          </TouchableOpacity>
+
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {mostrarSaldo ? (
+                <Texto
+                  style={[
+                    styles.saldo,
+                    saldo < 0 ? styles.saldoNegativo : styles.saldoPositivo
+                  ]}
+                >
+                  {saldo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                </Texto>
+              ) : (
+                <View style={styles.linhaSaldoOculto}/>
+              )}
+
+              <TouchableOpacity
+                onPress={() => setMostrarSaldo(!mostrarSaldo)}
+                style={{ marginLeft: 10 }}
+              >
+                <Ionicons
+                  name={mostrarSaldo ? "eye-off-outline" : "eye-outline"}
+                  size={28}
+                  color="#555"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
         </SafeAreaView>
         <ScrollView

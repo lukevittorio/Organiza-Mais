@@ -61,6 +61,13 @@ const estiloHome = StyleSheet.create({
         color: '#ce1515ff'
     },
 
+    linhaSaldoOculto: {
+        width: 100,
+        height: 32,
+        backgroundColor: "rgba(0,0,0,0.15)",
+        borderRadius: 6,
+    },
+
     // Scroll;
     scrollContent: {
         flex: 3,
