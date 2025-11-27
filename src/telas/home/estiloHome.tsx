@@ -156,7 +156,6 @@ const estiloHome = StyleSheet.create({
     },
 
     containerDevendo: {
-        flex: 1,
         flexDirection: "row",
         alignItems: "center",
     },
