@@ -36,8 +36,44 @@ export default function Cadastro({ navigation }: Props) {
         }, [])
     );
 
+    // Validar nome;
+    function validarNome(nome: string): string | null {
+        if (!nome.trim()) {
+            return "Preencha o nome.";
+        }
+
+        // Remover espaços extras;
+        const partes = nome.trim().split(" ").filter(n => n !== "");
+
+        // Verificar quantidade de nomes;
+        if (partes.length !== 2) {
+            return "Informe exatamente dois nomes: primeiro e último.";
+        }
+
+        // Regex que aceita apenas letras com acentos (mín. 2 caracteres);
+        const regexLetras = /^[A-Za-zÀ-ÿ]{2,}$/;
+
+        for (let parte of partes) {
+            if (!regexLetras.test(parte)) {
+                return "Use apenas letras, sem números ou caracteres especiais.";
+            }
+            if (parte.length < 2) {
+                return "Cada nome deve ter ao menos 2 letras.";
+            }
+        }
+
+        return null; // Nome válido;
+    }
+
     async function handleCadastro() {
-        if (!nome || !email || !senha) {
+        const erroNome = validarNome(nome);
+
+        if (erroNome) {
+            Alert.alert("Nome inválido", erroNome);
+            return;
+        }
+
+        if (!email || !senha) {
             Alert.alert("Campos vazios", "Preencha todos os campos.");
             return;
         }
@@ -113,7 +149,7 @@ export default function Cadastro({ navigation }: Props) {
                     <TextInput
                         value={nome}
                         onChangeText={setNome}
-                        placeholder="Nome"
+                        placeholder="Nome e Sobrenome"
                         style={styles.inputdentro}
                         placeholderTextColor='#038C8C'
                     />

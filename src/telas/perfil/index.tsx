@@ -53,9 +53,41 @@ export default function Perfil({ navigation, setLoggedIn }: Props) {
     setModalEditarVisible(true);
   }
 
+  // Validar nome;
+  function validarNome(nome: string): string | null {
+    if (!nome.trim()) {
+        return "Preencha o nome.";
+    }
+    
+    const partes = nome.trim().split(" ").filter(n => n !== "");
+
+    if (partes.length !== 2) {
+      return "Informe exatamente dois nomes: primeiro e último.";
+    }
+
+    const regexLetras = /^[A-Za-zÀ-ÿ]{2,}$/;
+
+    for (let parte of partes) {
+      if (!regexLetras.test(parte)) {
+        return "Use apenas letras, sem números ou caracteres especiais.";
+      }
+      if (parte.length < 2) {
+        return "Cada nome deve ter ao menos 2 letras.";
+      }
+    }
+
+    return null;
+  }
+
   // Salvar edição;
   const salvarEdicao = async () => {
     try {
+      const erroNome = validarNome(editNome);
+      if (erroNome) {
+        Alert.alert("Nome inválido", erroNome);
+        return;
+      }
+
       // Impedir campos vazios;
       if (!editNome.trim() || !editEmail.trim()) {
         Alert.alert("Campos vazios", "Preencha todos os campos.");

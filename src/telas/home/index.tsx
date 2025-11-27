@@ -125,7 +125,11 @@ export default function Home({ navigation }: Props) {
             .eq("UsuarioId", userId)
             .single();
 
-          if (!data) return;
+          if (!data) {
+            setDespesaPlan(0);
+            setSaldoPlanejamento(0);
+            return;
+          }
 
           // Definindo valores;
           setDespesaPlan(data.ValorDespesa);
@@ -236,7 +240,7 @@ export default function Home({ navigation }: Props) {
                   {saldo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </Texto>
               ) : (
-                <View style={styles.linhaSaldoOculto}/>
+                <View style={styles.linhaSaldoOculto} />
               )}
 
               <TouchableOpacity
